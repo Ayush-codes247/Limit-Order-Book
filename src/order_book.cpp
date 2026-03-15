@@ -108,6 +108,44 @@ void OrderBook::cancel_order(uint64_t order_id) {
     order_map.erase(order_id);
 }
 
+void OrderBook::execute_order(uint64_t order_id, uint64_t quantity){
+    // Case-1 : order_id not in book.
+    if(order_map.find(order_id) == order_map.end()){
+        std::cout << "[WARN] order " << order_id << " not found" << std::endl;
+        return;
+    }// Case-2 : quantity > order->quantity.
+    Order* order = order_map[order_id];
+    PriceLevel* level = order->level;
+    if(quantity > order->quantity){
+        std::cout << "[WARN] order " << order_id << " doesn't have enough quantity." << std::endl;
+        return;
+    }// Case-3 : quantity < order->quantity.
+    else if(quantity < order->quantity){
+        order->quantity -= quantity;
+        level->total_volume -= quantity;
+    }// Case-4 : quantity = order->quantity.
+    else{
+        cancel_order(order_id);
+    }
+}
+
+OrderBook::~OrderBook() {
+    for (auto& side : {bids, asks}) {        // iterate both sides
+        for (PriceLevel* level : side) {     // each slot
+            if (level == nullptr) continue;  // skip empty slots
+            // walk the linked list and delete each Order
+            // YOUR CODE HERE
+            Order* curr = level->head;
+            while(curr != nullptr){
+                Order* tmp = curr->next;
+                delete curr;
+                curr = tmp;
+            }
+            delete level;
+        }
+    }
+}
+
 
 
 
