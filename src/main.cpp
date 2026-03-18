@@ -118,4 +118,47 @@ int main() {
         book.execute_order(9999, 100);
         std::cout << "[T19] should print WARN above" << std::endl;
    }
+   {
+        OrderBook book(200000);
+
+        // Setup — three bid levels
+        book.add_order(5001, 15000, 100, true);
+        book.add_order(5002, 15100, 200, true);
+        book.add_order(5003, 15200, 300, true);
+
+        // Test 20 — cancel best bid, scans down to next level
+        book.cancel_order(5003);
+        std::cout << "[T20] best_bid after cancel: " << book.getBestBid()->price
+                << " (expected 15100)" << std::endl;
+
+        // Test 21 — cancel that level too, scans down again
+        book.cancel_order(5002);
+        std::cout << "[T21] best_bid after cancel: " << book.getBestBid()->price
+                << " (expected 15000)" << std::endl;
+
+        // Test 22 — cancel last level, best_bid goes nullptr
+        book.cancel_order(5001);
+        std::cout << "[T22] best_bid null: " << (book.getBestBid() == nullptr)
+                << " (expected 1)" << std::endl;
+
+        // Setup — three ask levels
+        book.add_order(6001, 15000, 100, false);
+        book.add_order(6002, 15100, 200, false);
+        book.add_order(6003, 15200, 300, false);
+
+        // Test 23 — cancel best ask, scans up to next level
+        book.cancel_order(6001);
+        std::cout << "[T23] best_ask after cancel: " << book.getBestAsk()->price
+                << " (expected 15100)" << std::endl;
+
+        // Test 24 — cancel that level too, scans up again
+        book.cancel_order(6002);
+        std::cout << "[T24] best_ask after cancel: " << book.getBestAsk()->price
+                << " (expected 15200)" << std::endl;
+
+        // Test 25 — cancel last level, best_ask goes nullptr
+        book.cancel_order(6003);
+        std::cout << "[T25] best_ask null: " << (book.getBestAsk() == nullptr)
+                << " (expected 1)" << std::endl;
+    }
 }
