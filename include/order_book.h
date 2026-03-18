@@ -18,10 +18,14 @@ public:
     size_t getBidsSize()     const { return bids.size(); }
     size_t getAsksSize()     const { return asks.size(); }
     size_t getOrderMapSize() const { return order_map.size(); }
-    
+    PriceLevel* getBestBid()             const { return best_bid; }
+    PriceLevel* getBestAsk()             const { return best_ask; }
+    PriceLevel* getBidLevel(uint64_t price) const { return bids[price]; }
+    PriceLevel* getAskLevel(uint64_t price) const { return asks[price]; }
+    bool        orderExists(uint64_t id)    const { return order_map.find(id) != order_map.end(); }
     // Destructor
     ~OrderBook();
-// private:   ← uncomment this when done testing
+private:
     OrderPool pool;
     std::vector<PriceLevel*>             bids;
     std::vector<PriceLevel*>             asks;
