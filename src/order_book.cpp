@@ -101,12 +101,22 @@ void OrderBook::cancel_order(uint64_t order_id) {
     if (level->order_count == 0) {
         if (order->is_bid) {
             bids[level->price] = nullptr;
-            if (best_bid == level)
-                best_bid = nullptr;   // proper scan comes later
+            if (best_bid == level) {
+                int32_t i = level->price - 1;
+                while (i > 0 && bids[i] == nullptr) {
+                    i--;
+                }
+                best_bid = best_bid = (i >= 0) ? bids[i] : nullptr;
+            }
         } else {
             asks[level->price] = nullptr;
-            if(best_ask == level)
-                best_ask = nullptr;
+            if(best_ask == level){
+                uint32_t i = level->price + 1;
+                while(i < asks.size() && asks[i] == nullptr){
+                    i++;
+                }
+                best_ask = (i < asks.size()) ? asks[i] : nullptr;
+            }
         }
         delete level;
     }
