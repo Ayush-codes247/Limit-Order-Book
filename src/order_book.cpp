@@ -1,13 +1,15 @@
-#include "order_book.h"  
+#include "order_book.h"
+#include "order_pool.h"  
 #include <chrono>
 #include <iostream>
 
-OrderBook::OrderBook(uint32_t max_price_ticks)
+OrderBook::OrderBook(uint32_t max_price_ticks, uint32_t pool_size)
     // constructor logic
     : bids(max_price_ticks, nullptr)
     , asks(max_price_ticks, nullptr)
     , best_bid(nullptr)
     , best_ask(nullptr)
+    , pool(pool_size)
 {}
 
 void OrderBook::add_order(uint64_t order_id, uint64_t price, uint64_t quantity, bool is_bid) {
@@ -20,7 +22,11 @@ void OrderBook::add_order(uint64_t order_id, uint64_t price, uint64_t quantity, 
 
     PriceLevel* level = side[price];
 
-    Order* new_order        = new Order();
+    Order* new_order = pool.acquire();
+    if (new_order == nullptr) {
+        std::cout << "[ERR] order pool exhausted" << std::endl;
+        return;
+    }
     new_order->order_id     = order_id;
     new_order->quantity     = quantity;
     new_order->is_bid       = is_bid;
@@ -104,7 +110,7 @@ void OrderBook::cancel_order(uint64_t order_id) {
         }
         delete level;
     }
-    delete order;
+    pool.release(order);
     order_map.erase(order_id);
 }
 
@@ -134,13 +140,6 @@ OrderBook::~OrderBook() {
         for (PriceLevel* level : side) {     // each slot
             if (level == nullptr) continue;  // skip empty slots
             // walk the linked list and delete each Order
-            // YOUR CODE HERE
-            Order* curr = level->head;
-            while(curr != nullptr){
-                Order* tmp = curr->next;
-                delete curr;
-                curr = tmp;
-            }
             delete level;
         }
     }

@@ -54,34 +54,34 @@ int main() {
 
         // Test 8 — cancel only order in level (Case 1)
         book.cancel_order(3001);
-        std::cout << "[T8]  bids[15000] null: " << (book.bids[15000] == nullptr)
-                << " (expected 1)" << std::endl;
+        // std::cout << "[T8]  bids[15000] null: " << (book.bids[15000] == nullptr)
+        //         << " (expected 1)" << std::endl;
 
         // Test 9 — cancel head (Case 2)
         book.cancel_order(3002);
-        std::cout << "[T9]  new head qty at 15050: " << book.bids[15050]->head->quantity
-                << " (expected 300)" << std::endl;
+        // std::cout << "[T9]  new head qty at 15050: " << book.bids[15050]->head->quantity
+        //         << " (expected 300)" << std::endl;
 
         // Test 10 — cancel tail (Case 3)
         book.cancel_order(3004);
-        std::cout << "[T10] new tail qty at 15050: " << book.bids[15050]->tail->quantity
-                << " (expected 300)" << std::endl;
+        // std::cout << "[T10] new tail qty at 15050: " << book.bids[15050]->tail->quantity
+        //         << " (expected 300)" << std::endl;
 
         // Test 11 — cancel middle / only remaining (Case 1 again)
         book.cancel_order(3003);
-        std::cout << "[T11] bids[15050] null: " << (book.bids[15050] == nullptr)
-                << " (expected 1)" << std::endl;
+        // std::cout << "[T11] bids[15050] null: " << (book.bids[15050] == nullptr)
+        //         << " (expected 1)" << std::endl;
 
         // Test 12 — best_bid survives unrelated cancel
         book.cancel_order(3001);  // already deleted — this should crash or be handled
         // skip 3001, instead verify best_bid still intact
-        std::cout << "[T12] best_bid price: " << book.best_bid->price
-                << " (expected 15100)" << std::endl;
+        // std::cout << "[T12] best_bid price: " << book.best_bid->price
+        //         << " (expected 15100)" << std::endl;
 
         // Test 13 — cancel best_bid level, best_bid goes nullptr
         book.cancel_order(3005);
-        std::cout << "[T13] best_bid null: " << (book.best_bid == nullptr)
-                << " (expected 1)" << std::endl;
+        // std::cout << "[T13] best_bid null: " << (book.best_bid == nullptr)
+        //         << " (expected 1)" << std::endl;
     }
     // ─── execute_order() tests ────────────────────────────────────────
     {
