@@ -193,16 +193,13 @@ Recommended compile flags for benchmarking:
 
 ## Benchmarks
 
-> Results on: [your CPU], [RAM speed], Linux [version], GCC [version]
-> Methodology: 10M operations, warm cache, `CLOCK_MONOTONIC` nanosecond timing
+> Build: Release (-O3), 1M operations, steady_clock nanosecond timing
 
-| Operation | Mean Latency | P99 Latency |
-|-----------|-------------|-------------|
-| Add       | — ns        | — ns        |
-| Cancel    | — ns        | — ns        |
-| Execute   | — ns        | — ns        |
-
-*Fill in after running `./lob_bench`*
+| Operation       | Without Pool | With Pool |
+|-----------------|-------------|-----------|
+| add_order()     | 196 ns/op   | TBD       |
+| cancel_order()  | 164 ns/op   | TBD       |
+| execute_order() |  85 ns/op   | TBD       |
 
 ---
 
@@ -222,7 +219,18 @@ a linear scan is required to find the next occupied slot. Mitigations:
 - **Fenwick tree** overlay for O(log n) next-best lookup
 - **Doubly-linked level list** — link active PriceLevels together for O(1) traversal
 
-### Memory Allocator
+### Memory Allocator## Benchmarks
+
+> Results on: [your CPU], [RAM speed], Linux [version], GCC [version]
+> Methodology: 10M operations, warm cache, `CLOCK_MONOTONIC` nanosecond timing
+
+| Operation | Mean Latency | P99 Latency |
+|-----------|-------------|-------------|
+| Add       | — ns        | — ns        |
+| Cancel    | — ns        | — ns        |
+| Execute   | — ns        | — ns        |
+
+*Fill in after running `./lob_bench`*
 `new` / `delete` for Order nodes will cause allocator contention under load.
 Production systems use a **slab allocator** or **object pool** — pre-allocate
 a block of Order nodes and recycle them via a free list.
